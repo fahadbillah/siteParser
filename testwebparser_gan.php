@@ -25,49 +25,81 @@ foreach ($allLink as $links)
         //var_dump($singlePost->find('.title_container'));
 
     	$title = $singlePost->find('.title_container h1');
+        //$title = $title1[0]->plaintext;
 
-
-        $newTitle = $title[0]; //because " find('.title_container h1') " returns an array
-        //echo $newTitle;
+        $newTitle = base64_encode($title[0]->plaintext); //because " find('.title_container h1') " returns an array
+        //var_dump($newTitle);
 
         //image section is not showing the src despite having to visible error
         $image = $singlePost->find('.jw_detail_content_holder img');
-        foreach($image as $element)
+        $Ztest= count($image);
+        if ($Ztest>0)
+        {   foreach($image as $element)
+            {
+            
+                $pic = base64_encode($element->src);
+               //global $pic;
+               //var_dump($pic);
+               //echo "<br> ";
+               break;
+            }
+        }
+
+        else
         {
-	
-        $pic = $element->src;
-	   //global $pic;
-       //echo $pic;
-	   //echo "<br> ";
-	   break;
+
+            $pic = base64_encode("http://images1.wikia.nocookie.net/__cb20100722190004/logopedia/images/thumb/b/b6/SNCB_B_logo.svg/120px-SNCB_B_logo.svg.png");
+
         }
         //echo $image[0]-> src;
         
         //detail news
         $detail = $singlePost->find('.jw_detail_content_holder');
-        $txt= $detail[0]->plaintext;
-        //echo $txt;
+        $txt= base64_encode($detail[0]->plaintext);
+        //var_dump($txt);
         $temparr= array('title' => $newTitle, 'newsImage'=>$pic, 'detail'=>$txt);
-        print_r($temparr);
-        //array_push($AllContent, $temparr);
-        break;
+        //print_r($temparr);
+        array_push($AllContent, $temparr);
+
 }
 
-echo $temparr['title'];
+$fp = fopen('prothomAlo.json', 'w');
+//fwrite($fp,json_encode(utf8json($AllContent)));
+fwrite($fp,'MyJSONPCallback(');
+fwrite($fp,json_encode($AllContent));
+fwrite($fp,')');
+fclose($fp);
+
+/*$fp2 = fopen('prothomAlo.json', 'r');
+//fwrite($fp,json_encode(utf8json($AllContent)));
+$vv = fread($fp2,filesize('prothomAlo.json'));
+$obj1=json_decode($vv);
+
+echo base64_decode($obj1[0]->title);
+echo "<br>";
+echo base64_decode($obj1[0]->newsImage);
+echo "<br>";
+echo base64_decode($obj1[0]->detail);
+echo "<br>";
+fclose($fp2);*/
+//json_encode(utf8json($dataArray));
+
+
+/*echo $temparr['title'];
 echo $temparr['newsImage'];
+echo "<br>";
 echo $temparr['detail'];
 
 //var_dump($temparr);
-
+*/
+//var_dump($AllContent);
 
 
 
 //$hell =serialize($temparr);
 
 
-$fp = fopen('prothomAlo.json', 'w');
-fwrite($fp,json_encode($temparr['title']));
-fclose($fp);
+
 
 
 /*$json = json_encode($temparr);    
